@@ -1,5 +1,5 @@
 # Set base URL for site - should end with a trailing slash
-baseURL = "https://mtkwt.github.io/"
+baseURL = "https://mtkwt.github.io/blog/"
 weight = 1
 title = "mtkwT blog"
 publishDir = "public"  # 公開ファイルのディレクトリ名
