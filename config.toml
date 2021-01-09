@@ -1,0 +1,40 @@
+# Set base URL for site - should end with a trailing slash
+baseURL = "https://mtkwt.github.io/blog"
+weight = 1
+title = "mtkwT blog"
+publishDir = "public"  # 公開ファイルのディレクトリ名
+googleAnalytics = "UA-155147816-1"
+
+hasCJKLanguage = true # 記事のサマリー機能を有効にする。trueにしないと記事サマリーの文章量が大きくなりすぎる。
+
+theme = "whiteplain"
+languageCode = "ja"
+pygmentsCodefences = true
+pygmentsUseClasses = true
+pygmentsOptions = "linenos=table"
+
+# Copyright notice. This is displayer in the footer.
+copyright = "&copy; Copyright mtkwT"
+
+[taxonomies]
+  category = "categories"
+  tag = "tags"
+  series = "series"
+[[menu.main]]
+  name = "Blog"
+  identifier = "blog"
+  url = "/post/"
+  weight = 1
+[[menu.main]]
+  name = "Tags"
+  weight = 2
+  identifier = "tags"
+  url = "/tags/"
+[[menu.main]]
+  name = "About"
+  weight = 3
+  identifier = "about"
+  url = "/about/me/"
+
+[markup.goldmark.renderer]
+  unsafe= true
