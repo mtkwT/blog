@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>自然言語処理 on mtkwT blog</title>
-    <link>https://mtkwt.github.io/blog/tags/%E8%87%AA%E7%84%B6%E8%A8%80%E8%AA%9E%E5%87%A6%E7%90%86/</link>
+    <link>https://mtkwt.github.io/tags/%E8%87%AA%E7%84%B6%E8%A8%80%E8%AA%9E%E5%87%A6%E7%90%86/</link>
     <description>Recent content in 自然言語処理 on mtkwT blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja</language>
     <copyright>&amp;copy; Copyright mtkwT</copyright>
     <lastBuildDate>Sat, 09 Mar 2019 16:20:49 +0900</lastBuildDate>
     
-	<atom:link href="https://mtkwt.github.io/blog/tags/%E8%87%AA%E7%84%B6%E8%A8%80%E8%AA%9E%E5%87%A6%E7%90%86/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://mtkwt.github.io/tags/%E8%87%AA%E7%84%B6%E8%A8%80%E8%AA%9E%E5%87%A6%E7%90%86/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>編集距離（Levenshtein Distance）の正規化手法</title>
-      <link>https://mtkwt.github.io/blog/post/levenshtein/</link>
+      <link>https://mtkwt.github.io/post/levenshtein/</link>
       <pubDate>Sat, 09 Mar 2019 16:20:49 +0900</pubDate>
       
-      <guid>https://mtkwt.github.io/blog/post/levenshtein/</guid>
+      <guid>https://mtkwt.github.io/post/levenshtein/</guid>
       <description>編集距離（Levenshtein Distance） 自然言語処理では2つの文字列間の類似度を測りたい場面がよくあります。 文章分類、スパムメール</description>
     </item>
     
