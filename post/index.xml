@@ -2,67 +2,67 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on mtkwT blog</title>
-    <link>https://mtkwt.github.io/post/</link>
+    <link>https://mtkwt.github.io/blog/post/</link>
     <description>Recent content in Posts on mtkwT blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja</language>
     <copyright>&amp;copy; Copyright mtkwT</copyright>
     <lastBuildDate>Wed, 06 May 2020 20:00:38 +0900</lastBuildDate>
     
-	<atom:link href="https://mtkwt.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://mtkwt.github.io/blog/post/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>エラーメモ:tf2のSparseCategoricalCrossentropyではヘッセ行列を計算できない</title>
-      <link>https://mtkwt.github.io/post/tf2_hessian_error/</link>
+      <link>https://mtkwt.github.io/blog/post/tf2_hessian_error/</link>
       <pubDate>Wed, 06 May 2020 20:00:38 +0900</pubDate>
       
-      <guid>https://mtkwt.github.io/post/tf2_hessian_error/</guid>
+      <guid>https://mtkwt.github.io/blog/post/tf2_hessian_error/</guid>
       <description>環境（Dockerhub） tensorflow/tensorflow:2.1.0-gpu-py3-jupyter エラーログ LookupError: Gradient explicitly disabled. Reason: b&amp;quot;Currently there is no way to take the second derivative of sparse_softmax_cross_entropy_with_logits due to the fused implementation&#39;s interaction with tf.gradients()&amp;quot; 原因 ヘッセ行列を計算するloss関数にtf.kera</description>
     </item>
     
     <item>
       <title>[論文紹介]On the interplay between noise and curvature and its effect on optimization and generalization</title>
-      <link>https://mtkwt.github.io/post/information_matrix/</link>
+      <link>https://mtkwt.github.io/blog/post/information_matrix/</link>
       <pubDate>Sun, 19 Apr 2020 03:28:21 +0900</pubDate>
       
-      <guid>https://mtkwt.github.io/post/information_matrix/</guid>
+      <guid>https://mtkwt.github.io/blog/post/information_matrix/</guid>
       <description>これは何？ 今回はAISTATS2020に採択されているOn the interplay between noise and curvature and its effect on optimization and generalization1を紹介します。 これまで深層学</description>
     </item>
     
     <item>
       <title>CentOS7にMoshをインストールして快適なリモート接続ライフを送る</title>
-      <link>https://mtkwt.github.io/post/mosh/</link>
+      <link>https://mtkwt.github.io/blog/post/mosh/</link>
       <pubDate>Sun, 12 Apr 2020 00:40:58 +0900</pubDate>
       
-      <guid>https://mtkwt.github.io/post/mosh/</guid>
+      <guid>https://mtkwt.github.io/blog/post/mosh/</guid>
       <description>Mosh（Mobile shell）とは Moshは不安定な回線環境でも堅牢なリモート接続を行ってくれるリモートターミナルアプリケーションです。</description>
     </item>
     
     <item>
       <title>VAEの理論とTensorflowによる実装~~Fashion-MNISTの生成~~</title>
-      <link>https://mtkwt.github.io/post/vae/</link>
+      <link>https://mtkwt.github.io/blog/post/vae/</link>
       <pubDate>Fri, 21 Jun 2019 23:12:26 +0900</pubDate>
       
-      <guid>https://mtkwt.github.io/post/vae/</guid>
+      <guid>https://mtkwt.github.io/blog/post/vae/</guid>
       <description>VAEとは VAE（Variable Auto Encoder） は深層生成モデルの一種です。深層生成モデルの神童、GANが設定する確率分布は暗黙的ですが</description>
     </item>
     
     <item>
       <title>Neural Ordinary Differential Equationsのための常微分方程式入門</title>
-      <link>https://mtkwt.github.io/post/ode/</link>
+      <link>https://mtkwt.github.io/blog/post/ode/</link>
       <pubDate>Sun, 10 Mar 2019 11:39:28 +0900</pubDate>
       
-      <guid>https://mtkwt.github.io/post/ode/</guid>
+      <guid>https://mtkwt.github.io/blog/post/ode/</guid>
       <description>Neural Ordinary Differential Equations NeurIPS2018ベストペーパーとして選ばれた論文に、ResNetの中間層を微分方程式として見るという興味深い研究がありました1</description>
     </item>
     
     <item>
       <title>編集距離（Levenshtein Distance）の正規化手法</title>
-      <link>https://mtkwt.github.io/post/levenshtein/</link>
+      <link>https://mtkwt.github.io/blog/post/levenshtein/</link>
       <pubDate>Sat, 09 Mar 2019 16:20:49 +0900</pubDate>
       
-      <guid>https://mtkwt.github.io/post/levenshtein/</guid>
+      <guid>https://mtkwt.github.io/blog/post/levenshtein/</guid>
       <description>編集距離（Levenshtein Distance） 自然言語処理では2つの文字列間の類似度を測りたい場面がよくあります。 文章分類、スパムメール</description>
     </item>
     

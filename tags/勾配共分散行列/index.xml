@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>勾配共分散行列 on mtkwT blog</title>
-    <link>https://mtkwt.github.io/tags/%E5%8B%BE%E9%85%8D%E5%85%B1%E5%88%86%E6%95%A3%E8%A1%8C%E5%88%97/</link>
+    <link>https://mtkwt.github.io/blog/tags/%E5%8B%BE%E9%85%8D%E5%85%B1%E5%88%86%E6%95%A3%E8%A1%8C%E5%88%97/</link>
     <description>Recent content in 勾配共分散行列 on mtkwT blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja</language>
     <copyright>&amp;copy; Copyright mtkwT</copyright>
     <lastBuildDate>Sun, 19 Apr 2020 03:28:21 +0900</lastBuildDate>
     
-	<atom:link href="https://mtkwt.github.io/tags/%E5%8B%BE%E9%85%8D%E5%85%B1%E5%88%86%E6%95%A3%E8%A1%8C%E5%88%97/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://mtkwt.github.io/blog/tags/%E5%8B%BE%E9%85%8D%E5%85%B1%E5%88%86%E6%95%A3%E8%A1%8C%E5%88%97/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>[論文紹介]On the interplay between noise and curvature and its effect on optimization and generalization</title>
-      <link>https://mtkwt.github.io/post/information_matrix/</link>
+      <link>https://mtkwt.github.io/blog/post/information_matrix/</link>
       <pubDate>Sun, 19 Apr 2020 03:28:21 +0900</pubDate>
       
-      <guid>https://mtkwt.github.io/post/information_matrix/</guid>
+      <guid>https://mtkwt.github.io/blog/post/information_matrix/</guid>
       <description>これは何？ 今回はAISTATS2020に採択されているOn the interplay between noise and curvature and its effect on optimization and generalization1を紹介します。 これまで深層学</description>
     </item>
     

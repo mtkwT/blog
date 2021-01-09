@@ -8,62 +8,62 @@
   <meta name="twitter:title" content="tensorflow - mtkwT blog" />
   <meta name="author" content=""/>
   <meta property="og:site_name" content="mtkwT blog" />
-  <meta property="og:url" content="https://mtkwt.github.io/tags/tensorflow/" />
+  <meta property="og:url" content="https://mtkwt.github.io/blog/tags/tensorflow/" />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary" />
   <meta name="generator" content="Hugo 0.62.0" />
-  <link href="/tags/tensorflow/index.xml" rel="alternate" type="application/rss+xml" title="mtkwT blog" />
-  <link href="/tags/tensorflow/index.xml" rel="feed" type="application/rss+xml" title="mtkwT blog" />
+  <link href="/blog/tags/tensorflow/index.xml" rel="alternate" type="application/rss+xml" title="mtkwT blog" />
+  <link href="/blog/tags/tensorflow/index.xml" rel="feed" type="application/rss+xml" title="mtkwT blog" />
 
-  <link rel="stylesheet" href="/css/style.css" media="all" />
-  <link rel="stylesheet" href="/css/syntax.css" media="all" />
-  <link rel="stylesheet" href="/css/custom.css" media="all" />
+  <link rel="stylesheet" href="/blog/css/style.css" media="all" />
+  <link rel="stylesheet" href="/blog/css/syntax.css" media="all" />
+  <link rel="stylesheet" href="/blog/css/custom.css" media="all" />
 
-  <script src="/js/script.js"></script>
-  <script src="/js/custom.js"></script>
-  <script defer src="/js/fontawesome.js"></script>
+  <script src="/blog/js/script.js"></script>
+  <script src="/blog/js/custom.js"></script>
+  <script defer src="/blog/js/fontawesome.js"></script>
 </head>
 
 <body>
 
 <header class="site-header">
   <nav class="site-navi">
-    <h1 class="site-title"><a href="/">mtkwT blog</a></h1>
+    <h1 class="site-title"><a href="/blog/">mtkwT blog</a></h1>
     <ul class="site-navi-items">
-      <li class="site-navi-item-blog"><a href="/post/" title="Blog">Blog</a></li>
-      <li class="site-navi-item-tags"><a href="/tags/" title="Tags">Tags</a></li>
-      <li class="site-navi-item-about"><a href="/about/me/" title="About">About</a></li>
+      <li class="site-navi-item-blog"><a href="/blog/post/" title="Blog">Blog</a></li>
+      <li class="site-navi-item-tags"><a href="/blog/tags/" title="Tags">Tags</a></li>
+      <li class="site-navi-item-about"><a href="/blog/about/me/" title="About">About</a></li>
     </ul>
   </nav>
 </header>
 <hr class="site-header-bottom">
 
   <div class="breadcrumb">
-    <a href="/tags/">Tags</a> / Tensorflow
+    <a href="/blog/tags/">Tags</a> / Tensorflow
   </div>
   <div class="main" role="main">
     <section class="list taxonomy-list">
       <article class="article">
-        <a href="/post/tf2_hessian_error/" class="article-titles">
+        <a href="/blog/post/tf2_hessian_error/" class="article-titles">
           <h2 class="article-title">エラーメモ:tf2のSparseCategoricalCrossentropyではヘッセ行列を計算できない</h2>
           
         </a>
         <ul class="article-meta">
           <li class="article-meta-date"><time>May 6, 2020</time></li>
           <li class="article-meta-tags">
-            <a href="/tags/%E6%B7%B1%E5%B1%A4%E5%AD%A6%E7%BF%92/">
+            <a href="/blog/tags/%E6%B7%B1%E5%B1%A4%E5%AD%A6%E7%BF%92/">
               <i class="fas fa-tag"></i>
               深層学習
             </a>&nbsp;
           </li>
           <li class="article-meta-tags">
-            <a href="/tags/%E3%83%98%E3%83%83%E3%82%BB%E8%A1%8C%E5%88%97/">
+            <a href="/blog/tags/%E3%83%98%E3%83%83%E3%82%BB%E8%A1%8C%E5%88%97/">
               <i class="fas fa-tag"></i>
               ヘッセ行列
             </a>&nbsp;
           </li>
           <li class="article-meta-tags">
-            <a href="/tags/tensorflow/">
+            <a href="/blog/tags/tensorflow/">
               <i class="fas fa-tag"></i>
               tensorflow
             </a>&nbsp;
@@ -72,7 +72,7 @@
         <div class="article-content">
           環境（Dockerhub） tensorflow/tensorflow:2.1.0-gpu-py3-jupyter エラーログ LookupError: Gradient explicitly disabled. Reason: b&quot;Currently there is no way to take the second derivative of sparse_softmax_cross_entropy_with_logits due to the fused implementation's interaction with tf.gradients()&quot; 原因 ヘッセ行列を計算するloss関数にtf.kera
         </div>
-        <div class="article-readmore"><a href="/post/tf2_hessian_error/">Read more...</a></div>
+        <div class="article-readmore"><a href="/blog/post/tf2_hessian_error/">Read more...</a></div>
         <div class="article-floatclear"></div>
       </article>
     </section>

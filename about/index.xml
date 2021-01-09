@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Abouts on mtkwT blog</title>
-    <link>https://mtkwt.github.io/about/</link>
+    <link>https://mtkwt.github.io/blog/about/</link>
     <description>Recent content in Abouts on mtkwT blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja</language>
     <copyright>&amp;copy; Copyright mtkwT</copyright>
     
-	<atom:link href="https://mtkwt.github.io/about/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://mtkwt.github.io/blog/about/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>本川 哲哉（Tetsuya Motokawa）- 手塚研究室 - 筑波大学大学院</title>
-      <link>https://mtkwt.github.io/about/me/</link>
+      <link>https://mtkwt.github.io/blog/about/me/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://mtkwt.github.io/about/me/</guid>
+      <guid>https://mtkwt.github.io/blog/about/me/</guid>
       <description>本川 哲哉（Tetsuya Motokawa） 筑波大学大学院 図書館情報メディア研究科 修士2年 手塚研究室: https://tarotez.github.io/index.html Email: s1921649@s.tsukuba.ac.jp 研究発表 Adaptive Hessian-free optimization for training neural network</description>
     </item>
     
