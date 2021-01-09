@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <title>[論文紹介]On the interplay between noise and curvature and its effect on optimization and generalization - mtkwT blog</title>
+  <meta property="og:title" content="[論文紹介]On the interplay between noise and curvature and its effect on optimization and generalization - mtkwT blog" />
+  <meta name="twitter:title" content="[論文紹介]On the interplay between noise and curvature and its effect on …" />
+  <meta name="description" content="これは何？ 今回はAISTATS2020に採択されているOn the interplay between noise and curvature and its effect on optimization and generalization1を紹介します。 これまで深層学">
+  <meta property="og:description" content="これは何？ 今回はAISTATS2020に採択されているOn the interplay between noise and curvature and its effect on optimization and generalization1を紹介します。 これまで深層学">
+  <meta name="twitter:description" content="これは何？ 今回はAISTATS2020に採択されているOn the interplay between noise and curvature and its effect on optimization and generalization1を紹介します。 これまで深層学">
+  <meta name="author" content=""/>
+  <meta property="og:site_name" content="mtkwT blog" />
+  <meta property="og:url" content="https://mtkwt.github.io/blog/post/information_matrix/" />
+  <meta property="og:type" content="article" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="generator" content="Hugo 0.62.0" />
+
+  <link rel="stylesheet" href="/blog/css/style.css" media="all" />
+  <link rel="stylesheet" href="/blog/css/syntax.css" media="all" />
+  <link rel="stylesheet" href="/blog/css/custom.css" media="all" />
+
+  <script src="/blog/js/script.js"></script>
+  <script src="/blog/js/custom.js"></script>
+  <script defer src="/blog/js/fontawesome.js"></script>
+</head>
+
+<body>
+
+<header class="site-header">
+  <nav class="site-navi">
+    <h1 class="site-title"><a href="/blog/">mtkwT blog</a></h1>
+    <ul class="site-navi-items">
+      <li class="site-navi-item-blog"><a href="/blog/post/" title="Blog">Blog</a></li>
+      <li class="site-navi-item-tags"><a href="/blog/tags/" title="Tags">Tags</a></li>
+      <li class="site-navi-item-about"><a href="/blog/about/me/" title="About">About</a></li>
+    </ul>
+  </nav>
+</header>
+<hr class="site-header-bottom">
+
+  <div class="main" role="main">
+    <article class="article">
+      
+      
+      <h1 class="article-title">[論文紹介]On the interplay between noise and curvature and its effect on optimization and generalization</h1>
+      
+      <hr class="article-title-bottom">
+      <ul class="article-meta">
+        
+        <li class="article-meta-date"><time>April 19, 2020</time></li>
+        
+        <li class="article-meta-tags">
+          <a href="/blog/tags/%E6%B7%B1%E5%B1%A4%E5%AD%A6%E7%BF%92/">
+            <i class="fas fa-tag"></i>
+            深層学習
+          </a>&nbsp;
+        </li>
+        <li class="article-meta-tags">
+          <a href="/blog/tags/%E6%9C%80%E9%81%A9%E5%8C%96%E7%90%86%E8%AB%96/">
+            <i class="fas fa-tag"></i>
+            最適化理論
+          </a>&nbsp;
+        </li>
+        <li class="article-meta-tags">
+          <a href="/blog/tags/%E6%B1%8E%E5%8C%96%E3%82%AE%E3%83%A3%E3%83%83%E3%83%97/">
+            <i class="fas fa-tag"></i>
+            汎化ギャップ
+          </a>&nbsp;
+        </li>
+        <li class="article-meta-tags">
+          <a href="/blog/tags/%E3%83%98%E3%83%83%E3%82%BB%E8%A1%8C%E5%88%97/">
+            <i class="fas fa-tag"></i>
+            ヘッセ行列
+          </a>&nbsp;
+        </li>
+        <li class="article-meta-tags">
+          <a href="/blog/tags/%E5%8B%BE%E9%85%8D%E5%85%B1%E5%88%86%E6%95%A3%E8%A1%8C%E5%88%97/">
+            <i class="fas fa-tag"></i>
+            勾配共分散行列
+          </a>&nbsp;
+        </li>
+      </ul>
+      
+<aside class="toc">
+  <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#heading">これは何？</a></li>
+        <li><a href="#heading-1">先行研究と比べてどこがすごい？</a></li>
+        <li><a href="#heading-2">手法</a></li>
+        <li><a href="#heading-4">実験</a></li>
+        <li><a href="#heading-7">まとめと考察</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+</aside>
+      <h3 id="heading">これは何？</h3>
+<p>今回はAISTATS2020に採択されているOn the interplay between noise and curvature and its effect on optimization and generalization<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>を紹介します。
+これまで深層学習において重みパラメータ最適化の収束速度や汎化ギャップを測る際に、損失関数の曲率（flatness）と勾配のノイズ（sensitivity）を考慮するさまざまな研究がされてきました。しかし従来はこれらのどちらかに焦点を当てるものが多かったです。
+この論文では損失関数の曲率を表す行列と、ノイズを表す行列の間の共通点・相違点に関して理論的・実験的に分析しています。
+普段の研究でニューラルネットワークのヘッセ行列分析などを行っている私にとって非常にクリティカルな内容だったので、自分自身へのまとめとして記事を残そうと思います。</p>
+<h3 id="heading-1">先行研究と比べてどこがすごい？</h3>
+<p>前述したように、従来は曲率行列かノイズ行列のどちらかに焦点を当てて最適化の収束速度や汎化ギャップの評価をしていました。
+この論文ではどちらも考慮している点で進化しています。
+またヘッセ行列と勾配共分散行列の両方を用いて竹内情報量基準（TIC）という指標でニューラルネットワークの汎化ギャップを測っている点が特徴的です。
+TIC自体は1976年に考案された情報量基準ですが、ニューラルネットワークに適用している例が今までなかったため、それを試したというのが貢献の1つでもあります。</p>
+<h3 id="heading-2">手法</h3>
+<h4 id="information-matrix">Information Matrix</h4>
+<p>論文中でInformation Matrixとして登場する3つの行列の定義が以下になります。
+$H(\theta)$がヘッセ行列、$C(\theta)$は勾配共分散行列、$F(\theta)$がフィッシャー情報行列です。</p>
+<figure class="center">
+    <img src="/image/Infomation_Matrix/info_mat.png" width="480" height="240"/> 
+</figure>
+
+<p>$p$がデータ分布、$q_{\theta}$はモデル分布で、それぞれ$X \times Y \rightarrow R$を表しています。
+以下の議論では、データ分布として真のデータ分布or経験データ分布のどちらを用いても構いません。
+またモデル分布としては、分類問題をニューラルネットワークで扱う場合$q_{\theta}(y|x)$がソフトマックス関数に当たります。
+ここでヘッセ行列と勾配共分散行列はデータ分布における期待値、フィッシャー情報行列はモデル分布における期待値ということに注意です。
+$p=q_{\theta}$の場合、すべての行列は等しくなります。
+HとFは曲率行列であり、現在の点の周りの空間の形状を表します。一方でCはノイズ行列であり、特定のサンプルに対する勾配の感度を表しています。</p>
+<h4 id="information-matrix-1">Information Matrix同士の距離評価</h4>
+<p>Information Matrix同士で以下のような不等式が成り立ちます。</p>
+<figure class="center">
+    <img src="/image/Infomation_Matrix/info_mat_bound.png" width="480" height="240"/> 
+</figure>
+
+<p>ここで$D_{X^2}(p||q_{\theta})$は$X^2$ダイバージェンスという確率分布間の距離を表す関数で以下のように定義されます。
+$$
+D_{X^2}(p||q_{\theta}) = \int \int \frac{(p(x, y) - q_{\theta}(x, y))^2}{q_{\theta}(x, y)} dx dy
+$$</p>
+<p>また式中のノルムは行列間の距離を測る時によく用いられるフロベニウスノルムです。</p>
+<p>これらの不等式から、モデルの学習が適切な方向に進みモデル分布とデータ分布が近づくにつれて各々の情報行列の距離は小さくなります。</p>
+<h4 id="takeuchi-information-criterion">竹内情報量基準（Takeuchi information criterion）</h4>
+<p>この論文では、汎化ギャップ評価のために竹内情報量基準（TIC）という指標を用いています。
+よく汎化ギャップの評価に用いられる不偏推定量として、赤池情報量基準（AIC）という指標があります。
+AICの推定量はデータサイズ$N$、パラメータの次元を$d$として$\frac{1}{N} d$で表されます。
+この推定量は訓練データ上の最尤パラメータ付近では局所的に有効ですが、テストデータに対してこの仮定はほとんど保持されないため、汎化ギャップ推定としての精度はあまり高くありません。
+これに対してTICはパラメータ周辺の曲率や勾配のノイズを考慮することでより精度の高い汎化ギャップ推定を行います。
+TICの推定量は以下のように定義されます。
+$$
+\hat{\mathcal{G}} = \frac{1}{N} Tr(H(\hat{\theta^{*}})^{-1}C(\hat{\theta^{*}}))
+$$
+DNNのようなパラメータ数の大きなモデルではヘッセ行列やその逆行列を計算するのが非常に困難です。
+そこで論文内の実験ではヘッセ行列をフィッシャー情報行列で近似したり、逆行列の代わりにトレースの逆数を使用することでTICの近似値を用いています。</p>
+<h4 id="heading-3">テクニカルな話題</h4>
+<p>2.2節の&quot;C does not approximate F&quot;における議論は非常に興味深いです。勾配共分散行列Cはよくフィッシャー情報行列Fの近似行列（論文内では“empirical Fisher”）と記述されることがあるが、それは多くの場合間違いだと主張しています。
+簡単な例として最小二乗回帰問題を扱っています。
+目標変数のノイズがガウス分布に従うとして、その共分散行列を$\Sigma$とします。
+パラメータが収束した時、以下の式が成り立ちます。
+$$
+H=F=E_{p}(x x^{T}), \ \ C=E_{p}(x \Sigma x^{T})
+$$
+つまり全パラメータに対してヘッセ行列とフィッシャー情報行列が等しくなり、$\Sigma = \alpha^2 I$のとき$C \propto H = F$となります。
+多くの現実問題では、$\Sigma$が等方性のノイズに従うことはほとんどないため、KFACのようなSecond-order Optimizerの中でFの代わりにCを近似行列として扱うと失敗する原因がこれに当たります。</p>
+<h3 id="heading-4">実験</h3>
+<h4 id="heading-5">実験設定</h4>
+<p>論文内の実験設定は以下の通りです。</p>
+<ul>
+<li>モデル: ロジスティック回帰・3層MLP・4層MLP・Batch Normalizationなしの小規模CNN・Batch Normalizationありの小規模CNN</li>
+<li>データセット: MNIST・CIFAR-10・SVHN</li>
+<li>Momentum SGD($\mu=0.9$)の学習率: $\alpha = 10^{-2}, \ 5 \cdot 10^{-3}, \ 10^{-3}$</li>
+<li>バッチサイズ: $64, \ 128$</li>
+<li>データサイズ: $5k, \ 10k, \ 20k, \ 25k, \ 50k$</li>
+</ul>
+<p>モデルのアーキテクチャとして、より詳しくは以下の通りです。
+<figure class="center">
+    <img src="/image/Infomation_Matrix/model_arch.png" width="800" height="200"/> 
+</figure>
+</p>
+<p>データの次元が大きすぎるとInformation Matrixの計算が困難になるため、すべての画像をグレースケール化・$7 \times 7$ピクセルにリサイズしています。</p>
+<h4 id="heading-6">実験結果</h4>
+<p>以下の図1はさまざまなモデルアーキテクチャ・データセットについて、学習中の勾配共分散行列$C$とフィッシャー情報行列$F$間距離の変化を表しています。
+<figure class="center">
+    <img src="/image/Infomation_Matrix/C-F.png" width="480" height="380"/> 
+</figure>
+</p>
+<p>一部のモデル・データセットでは、最終的に2つの行列が訓練データにおいて一致しています。
+しかしながら他の多くのモデル・データセットでは訓練誤差が十分小さくなっているのに、2つの行列間距離がまったく小さくならない例もあります。
+また訓練データにおいてCとFが一致していても、テストデータにおいても一致するとは限りません。</p>
+<p>以下の図2はInformation Matrix間の類似度と相違点を分析した結果です。
+左図における$r(A,B)$は2つの行列AとBのトレースの比、つまり$\frac{Tr(A)}{Tr(B)}$を表しています。
+さらに右図における$s(A,B)$は2つの行列AとB間のcosine similarity、つまり$\frac{A \cdot B}{||A|| \cdot ||B|||}$を表しています。
+ここで、$r(A,B)=1$かつ$s(A,B)=1$のとき、$A=B$となります。
+<figure class="center">
+    <img src="/image/Infomation_Matrix/info_mat_sim.png" width="480" height="250"/> 
+</figure>
+</p>
+<p>学習の初期段階ではHがFやCとのcosine similarityにおいて異なる行列となっていますが、100step目付近からこれらの行列はすべて高い類似度を取るようになります。
+またトレースの比$r(A,B)$について見ると、$Tr(C)$が$Tr(H)$や$Tr(F)$に比べて大きい値を取っていることが分かります。
+つまり最小二乗回帰の例と同様に$C \propto H = F$となります。</p>
+<p>以下の図3は、汎化ギャップとTIC・Sensitivity・AICという推定量の当てはまり度を表しています。
+ここで、汎化ギャップとは訓練損失とテスト損失の差です。
+<figure class="center">
+    <img src="/image/Infomation_Matrix/compare_TIC.png" width="600" height="450"/> 
+</figure>
+</p>
+<p>SVHNデータセットの2000サンプルのサブセット上で3層ニューラルネットワークを学習してそれぞれの指標を計算します。
+図3aでは隠れ層のユニット数のみを変化させており、逆に図3bでは隠れ層のユニット数は固定してラベルのランダム化率を変化させています。
+ヘッセ行列・勾配共分散行列・感度は、テストデータの内5000サンプルのサブセットで計算されます。</p>
+<p>図3(a),(b)のどちらでもTICがもっとも汎化ギャップに当てはまっていることが分かります。</p>
+<p>図4では汎化ギャップとTIC・flatnessとの相関を比較しています。
+<figure class="center">
+    <img src="/image/Infomation_Matrix/TIC_flatness.png" width="600" height="450"/> 
+</figure>
+</p>
+<p>図4(a),(b)を比較すると、明らかにTICの方がヘッセ行列のトレース（flatness）に比べて汎化ギャップとの相関がある、ということがわかります。</p>
+<p>最後に図5ではTICの近似値を用いて汎化ギャップとの相関を見ています。
+<figure class="center">
+    <img src="/image/Infomation_Matrix/tic_approximation.png" width="600" height="450"/> 
+</figure>
+</p>
+<p>どちらの図もヘッセ行列の代わりにフィッシャー情報行列を用いており、右図は逆行列を計算する代わりにそれぞれのトレースの比を用いています。トレースの比を用いる場合、汎化ギャップが大きいときに高い相関を示すが、小さいときには過大評価する傾向があります。</p>
+<h3 id="heading-7">まとめと考察</h3>
+<p>汎化ギャップは訓練集合とデータ分布との間に存在する不一致度を捉えます。
+したがって汎化ギャップを推定するにはデータ分布自身の不確実性を評価する必要があります。
+この論文内では不確実性を捉えるために、従来のようにflatness（ヘッセ行列）とsensitivity（勾配共分散行列）のどちらかのみを考慮するのではなく、TICを使用することで両行列の情報を考慮してより高い精度で汎化ギャップを推定しています。</p>
+<p>また、最後の章で「Adamは損失関数の二次の情報を使っていると言われているが、曲率ではなくノイズ、つまり勾配の分散を考慮しているのではないか」と考察している点が非常に興味深いです。つまり、Adamのような適応的最適化手法が上手くいっているのは勾配のノイズ情報を上手く駆使して、勾配の分散を削減していることが要因なのではないかという主張です。</p>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://arxiv.org/abs/1906.07774">https://arxiv.org/abs/1906.07774</a> <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+
+    </article>
+
+    
+
+
+    <ul class="pager article-pager">
+      <li class="pager-newer">
+          <a href="/blog/post/tf2_hessian_error/" data-toggle="tooltip" data-placement="top" title="エラーメモ:tf2のSparseCategoricalCrossentropyではヘッセ行列を計算できない">&lt; Newer</a>
+      </li>
+      <li class="pager-older">
+        <a href="/blog/post/mosh/" data-toggle="tooltip" data-placement="top" title="CentOS7にMoshをインストールして快適なリモート接続ライフを送る">Older &gt;</a>
+      </li>
+    </ul>
+  </div>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+    });
+</script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+</body>
+</html>

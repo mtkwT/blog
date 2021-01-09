@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <title>CentOS7にMoshをインストールして快適なリモート接続ライフを送る - mtkwT blog</title>
+  <meta property="og:title" content="CentOS7にMoshをインストールして快適なリモート接続ライフを送る - mtkwT blog" />
+  <meta name="twitter:title" content="CentOS7にMoshをインストールして快適なリモート接続ライフを送る - mtkwT blog" />
+  <meta name="description" content="Mosh（Mobile shell）とは Moshは不安定な回線環境でも堅牢なリモート接続を行ってくれるリモートターミナルアプリケーションです。">
+  <meta property="og:description" content="Mosh（Mobile shell）とは Moshは不安定な回線環境でも堅牢なリモート接続を行ってくれるリモートターミナルアプリケーションです。">
+  <meta name="twitter:description" content="Mosh（Mobile shell）とは Moshは不安定な回線環境でも堅牢なリモート接続を行ってくれるリモートターミナルアプリケーションです。">
+  <meta name="author" content=""/>
+  <meta property="og:site_name" content="mtkwT blog" />
+  <meta property="og:url" content="https://mtkwt.github.io/blog/post/mosh/" />
+  <meta property="og:type" content="article" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="generator" content="Hugo 0.62.0" />
+
+  <link rel="stylesheet" href="/blog/css/style.css" media="all" />
+  <link rel="stylesheet" href="/blog/css/syntax.css" media="all" />
+  <link rel="stylesheet" href="/blog/css/custom.css" media="all" />
+
+  <script src="/blog/js/script.js"></script>
+  <script src="/blog/js/custom.js"></script>
+  <script defer src="/blog/js/fontawesome.js"></script>
+</head>
+
+<body>
+
+<header class="site-header">
+  <nav class="site-navi">
+    <h1 class="site-title"><a href="/blog/">mtkwT blog</a></h1>
+    <ul class="site-navi-items">
+      <li class="site-navi-item-blog"><a href="/blog/post/" title="Blog">Blog</a></li>
+      <li class="site-navi-item-tags"><a href="/blog/tags/" title="Tags">Tags</a></li>
+      <li class="site-navi-item-about"><a href="/blog/about/me/" title="About">About</a></li>
+    </ul>
+  </nav>
+</header>
+<hr class="site-header-bottom">
+
+  <div class="main" role="main">
+    <article class="article">
+      
+      
+      <h1 class="article-title">CentOS7にMoshをインストールして快適なリモート接続ライフを送る</h1>
+      
+      <hr class="article-title-bottom">
+      <ul class="article-meta">
+        
+        <li class="article-meta-date"><time>April 12, 2020</time></li>
+        
+        <li class="article-meta-tags">
+          <a href="/blog/tags/ssh/">
+            <i class="fas fa-tag"></i>
+            ssh
+          </a>&nbsp;
+        </li>
+        <li class="article-meta-tags">
+          <a href="/blog/tags/shell/">
+            <i class="fas fa-tag"></i>
+            shell
+          </a>&nbsp;
+        </li>
+      </ul>
+      
+<aside class="toc">
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#moshmobile-shell">Mosh（Mobile shell）とは</a></li>
+    <li><a href="#heading">しくみ</a></li>
+    <li><a href="#heading-1">利点</a></li>
+    <li><a href="#mosh">Mosh導入方法</a>
+      <ul>
+        <li><a href="#heading-2">環境</a></li>
+        <li><a href="#heading-3">サーバ側</a></li>
+        <li><a href="#heading-4">ローカル側</a></li>
+      </ul>
+    </li>
+    <li><a href="#mosh-1">Moshの実行</a></li>
+  </ul>
+</nav>
+</aside>
+      <h2 id="moshmobile-shell">Mosh（Mobile shell）とは</h2>
+<p>Moshは不安定な回線環境でも堅牢なリモート接続を行ってくれるリモートターミナルアプリケーションです。
+初リリースは2012年3月12日と8年前に出たアプリケーションです。<br>
+<a href="https://mosh.org">https://mosh.org</a></p>
+<h2 id="heading">しくみ</h2>
+<p>サーバ側にMoshサーバがインストールされている状態でローカルのPCから</p>
+<pre><code>mosh (username)@(hostname)
+</code></pre><p>と打つと、サーバに対して素のSSH接続を行います。
+SSHのリモートコマンド実行によってリモートサーバ側でMoshサーバを立ち上げます。
+そして立ち上がったMoshサーバとローカルのMoshクライアントがUDPで接続を行うというような仕組みになっています。
+サーバ側で起動した仮想端末にこちらのクライアントが接続しにいくという構図なのでtmuxなどと近いしくみです。</p>
+<h2 id="heading-1">利点</h2>
+<p>素のSSHはTCP接続ですが、MoshではUDPで接続されるのでパケットロスなどに強いです。
+また、デフォルトで再接続を行うので途中でWifiを変えたりVPNが切れても、もう一度繋げば自動で再接続が行われます。
+さらにMoshでは劣悪な回線利用者のためにローカルのエコーバックがあり、キーボード入力が端末側へ即座に反映されます。
+普段マンションの劣悪な無料回線を使用している私にとってはこの利点がとても大きいです。</p>
+<ul>
+<li>リモート接続が自動で復活する</li>
+<li>ローカルのエコーバックが良い</li>
+</ul>
+<h2 id="mosh">Mosh導入方法</h2>
+<h3 id="heading-2">環境</h3>
+<ul>
+<li>サーバ: CentOS7</li>
+<li>ローカル: macOS Catalina 10.15.2</li>
+</ul>
+<p>大前提としてローカルからサーバに対して素のSSH接続できる必要があります。</p>
+<h3 id="heading-3">サーバ側</h3>
+<p>Moshサーバをyumからインストールします。
+デフォルトではyumリポジトリの中にmoshが存在しないので、まずEPELリポジトリのインストールが必要です。</p>
+<pre><code>sudo yum install epel-release
+</code></pre><p>mosh本体をインストールします。</p>
+<pre><code>sudo yum install mosh
+</code></pre><p>これでサーバ側は完了です。</p>
+<h3 id="heading-4">ローカル側</h3>
+<p>今回はmacを想定しているので、brewでmoshクライアントをインストールします。</p>
+<pre><code>brew install mobile-shell
+</code></pre><p>これで終わりです。簡単ですね。</p>
+<h2 id="mosh-1">Moshの実行</h2>
+<p>普通のSSHと同様に以下のコマンドで接続できます。</p>
+<pre><code>mosh (username)@(hostname)
+</code></pre><pre><code>Host 任意の接続名(hoge)
+HostName ホスト名
+User ユーザー名
+IdentityFile 秘密鍵へのPATH
+</code></pre><p>上記のような~/.ssh/configを設定している場合、以下のコマンドで接続できます。</p>
+<pre><code>mosh hoge
+</code></pre>
+    </article>
+
+    
+
+
+    <ul class="pager article-pager">
+      <li class="pager-newer">
+          <a href="/blog/post/information_matrix/" data-toggle="tooltip" data-placement="top" title="[論文紹介]On the interplay between noise and curvature and its effect on optimization and generalization">&lt; Newer</a>
+      </li>
+      <li class="pager-older">
+        <a href="/blog/post/vae/" data-toggle="tooltip" data-placement="top" title="VAEの理論とTensorflowによる実装~~Fashion-MNISTの生成~~">Older &gt;</a>
+      </li>
+    </ul>
+  </div>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+    });
+</script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <title>編集距離（Levenshtein Distance）の正規化手法 - mtkwT blog</title>
+  <meta property="og:title" content="編集距離（Levenshtein Distance）の正規化手法 - mtkwT blog" />
+  <meta name="twitter:title" content="編集距離（Levenshtein Distance）の正規化手法 - mtkwT blog" />
+  <meta name="description" content="編集距離（Levenshtein Distance） 自然言語処理では2つの文字列間の類似度を測りたい場面がよくあります。 文章分類、スパムメール">
+  <meta property="og:description" content="編集距離（Levenshtein Distance） 自然言語処理では2つの文字列間の類似度を測りたい場面がよくあります。 文章分類、スパムメール">
+  <meta name="twitter:description" content="編集距離（Levenshtein Distance） 自然言語処理では2つの文字列間の類似度を測りたい場面がよくあります。 文章分類、スパムメール">
+  <meta name="author" content=""/>
+  <meta property="og:site_name" content="mtkwT blog" />
+  <meta property="og:url" content="https://mtkwt.github.io/blog/post/levenshtein/" />
+  <meta property="og:type" content="article" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="generator" content="Hugo 0.62.0" />
+
+  <link rel="stylesheet" href="/blog/css/style.css" media="all" />
+  <link rel="stylesheet" href="/blog/css/syntax.css" media="all" />
+  <link rel="stylesheet" href="/blog/css/custom.css" media="all" />
+
+  <script src="/blog/js/script.js"></script>
+  <script src="/blog/js/custom.js"></script>
+  <script defer src="/blog/js/fontawesome.js"></script>
+</head>
+
+<body>
+
+<header class="site-header">
+  <nav class="site-navi">
+    <h1 class="site-title"><a href="/blog/">mtkwT blog</a></h1>
+    <ul class="site-navi-items">
+      <li class="site-navi-item-blog"><a href="/blog/post/" title="Blog">Blog</a></li>
+      <li class="site-navi-item-tags"><a href="/blog/tags/" title="Tags">Tags</a></li>
+      <li class="site-navi-item-about"><a href="/blog/about/me/" title="About">About</a></li>
+    </ul>
+  </nav>
+</header>
+<hr class="site-header-bottom">
+
+  <div class="main" role="main">
+    <article class="article">
+      
+      
+      <h1 class="article-title">編集距離（Levenshtein Distance）の正規化手法</h1>
+      
+      <hr class="article-title-bottom">
+      <ul class="article-meta">
+        
+        <li class="article-meta-date"><time>March 9, 2019</time></li>
+        
+        <li class="article-meta-tags">
+          <a href="/blog/tags/%E8%87%AA%E7%84%B6%E8%A8%80%E8%AA%9E%E5%87%A6%E7%90%86/">
+            <i class="fas fa-tag"></i>
+            自然言語処理
+          </a>&nbsp;
+        </li>
+        <li class="article-meta-tags">
+          <a href="/blog/tags/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92/">
+            <i class="fas fa-tag"></i>
+            機械学習
+          </a>&nbsp;
+        </li>
+      </ul>
+      
+<aside class="toc">
+  <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#levenshtein-distance">編集距離（Levenshtein Distance）</a></li>
+        <li><a href="#heading">編集距離の定義と例</a></li>
+        <li><a href="#python">pythonによる実装</a></li>
+        <li><a href="#heading-1">正規化</a></li>
+        <li><a href="#heading-2">参考</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+</aside>
+      <h3 id="levenshtein-distance">編集距離（Levenshtein Distance）</h3>
+<p>自然言語処理では2つの文字列間の類似度を測りたい場面がよくあります。<br>
+文章分類、スパムメール検知などが有名なタスクですね。類似度というと、コサイン類似度が有名でよく用いられます。確かにコサイン類似度はかなり便利ですが、2つの文字列を固定長のベクトルにしないと測れません。<br>
+そこで、もっと簡単に文字列間の距離を測る尺度として&quot;編集距離（Levenshtein Distance）&ldquo;というものが使われます。</p>
+<h3 id="heading">編集距離の定義と例</h3>
+<p>Wikipediaでは以下のような定義がされています。<br>
+「1文字の挿入・削除・置換によって、一方の文字列をもう一方の文字列へ変形するのに必要な手順の最小回数として定義される」<br>
+たとえば、「機械学習」と「器械体操」という2つの文字列間の編集距離は3です。これは「器械体操」という文字列において「器 -&gt; 機」、「体 -&gt; 学」、「操 -&gt; 習」という3回の置換で「機械学習」が得られるので、編集距離は3です。3回以下の操作では「器械体操」を「機械学習」にすることはできません。</p>
+<h3 id="python">pythonによる実装</h3>
+<p>実装は動的計画法によるものです。計算量は2つの文字列の長さをn,mとするとO(nm)です。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">levenshtein_disrtance</span><span class="p">(</span><span class="n">str1</span><span class="p">,</span> <span class="n">str2</span><span class="p">)</span><span class="p">:</span>
+    <span class="n">length1</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">str1</span><span class="p">)</span>
+    <span class="n">length2</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">str2</span><span class="p">)</span>
+
+    <span class="n">dp_matrix</span> <span class="o">=</span> <span class="p">[</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">length2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="p">:</span>
+        <span class="n">dp_matrix</span><span class="p">[</span><span class="n">row</span><span class="p">]</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span>
+
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="p">:</span>
+        <span class="n">dp_matrix</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">col</span>
+
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">length1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">length2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">str1</span><span class="p">[</span><span class="n">row</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">str2</span><span class="p">[</span><span class="n">col</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="p">:</span>
+                <span class="n">cost</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cost</span> <span class="o">=</span> <span class="mi">1</span>
+            
+            <span class="n">dp_matrix</span><span class="p">[</span><span class="n">row</span><span class="p">]</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">dp_matrix</span><span class="p">[</span><span class="n">row</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>          <span class="c1"># 文字の挿入</span>
+                                      <span class="n">dp_matrix</span><span class="p">[</span><span class="n">row</span><span class="p">]</span><span class="p">[</span><span class="n">col</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>          <span class="c1"># 文字の削除</span>
+                                      <span class="n">dp_matrix</span><span class="p">[</span><span class="n">row</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="p">[</span><span class="n">col</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">cost</span><span class="p">)</span>   <span class="c1"># 文字の置換</span>
+
+    <span class="k">return</span> <span class="n">dp_matrix</span><span class="p">[</span><span class="n">length1</span><span class="p">]</span><span class="p">[</span><span class="n">length2</span><span class="p">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="heading-1">正規化</h3>
+<p>今のままでは、たとえば2つの文字列が3文字同士でまったく異なる文字列と、1000文字同士で異なる部分が3箇所の場合、編集距離はどちらも3です。普通の感覚からすると、後者の場合の方が類似度という意味では近いと感じるかと思います。そこで正規化の出番です。距離なので、正規化をする場合よく使われるのは大きい方の文字列の長さで割るというものです。これにより先ほどの場合だと、前者は3/3 = 1、後者は3/1000 = 0.003となり後者の方が、距離が近いという感覚に合う結果となります。</p>
+<p>また、より後者の方が近いんだぞという意味合いを強く評価したい場合もあります。そのような場合、負の編集距離を指数関数に放り込むという手法も考えられます。下図のようにexp(-x)のグラフを考えると、距離xが0に近いほどexp(-x)の値は1に近づき、xの値が大きくなればなるほど加速度的に0に近くなっていきます。この際、あらかじめ大きい方の文字列の長さで割った編集距離をxとしても良いし、何らかのパラメータ（たとえば正規分布にしたがっていそうなら、文字列集合の長さの平均値）で割ったものをxとしても良いと思います。また、指数関数による変換を行うと距離ではなく、類似度（0が遠い、1が近い）として扱うことになります。</p>
+<!-- ![hugo-img1](/image/exp.png) -->
+<p>実装としてはnumpyなりmathなりをimportして最後のreturn部分のみ変えればOKです。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="k">return</span> <span class="n">dp_matrix</span><span class="p">[</span><span class="n">length1</span><span class="p">]</span><span class="p">[</span><span class="n">length2</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">length1</span><span class="p">,</span> <span class="n">length2</span><span class="p">)</span> <span class="c1"># 長さによる正規化</span>
+<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">dp_matrix</span><span class="p">[</span><span class="n">length1</span><span class="p">]</span><span class="p">[</span><span class="n">length2</span><span class="p">]</span> <span class="o">/</span> <span class="n">param</span><span class="p">)</span>           <span class="c1"># 指数関数による正規化</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="heading-2">参考</h3>
+<p>以下のサイトやブログ記事を参考にさせていただきました。</p>
+<ul>
+<li><a href="https://takuti.me/note/levenshtein-distance/">https://takuti.me/note/levenshtein-distance/</a></li>
+<li><a href="https://xaro.hatenablog.jp/entry/2017/02/24/005126">https://xaro.hatenablog.jp/entry/2017/02/24/005126</a></li>
+<li><a href="http://d.hatena.ne.jp/naoya/20090329/1238307757">http://d.hatena.ne.jp/naoya/20090329/1238307757</a></li>
+<li><a href="https://ja.wikipedia.org/wiki/">https://ja.wikipedia.org/wiki/</a>レーベンシュタイン距離</li>
+</ul>
+
+    </article>
+
+    
+
+
+    <ul class="pager article-pager">
+      <li class="pager-newer">
+          <a href="/blog/post/ode/" data-toggle="tooltip" data-placement="top" title="Neural Ordinary Differential Equationsのための常微分方程式入門">&lt; Newer</a>
+      </li>
+      <li class="pager-older pager-noitem">Older &gt;</li>
+    </ul>
+  </div>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+    });
+</script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+</body>
+</html>

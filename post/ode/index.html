@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <title>Neural Ordinary Differential Equationsのための常微分方程式入門 - mtkwT blog</title>
+  <meta property="og:title" content="Neural Ordinary Differential Equationsのための常微分方程式入門 - mtkwT blog" />
+  <meta name="twitter:title" content="Neural Ordinary Differential Equationsのための常微分方程式入門 - mtkwT blog" />
+  <meta name="description" content="Neural Ordinary Differential Equations NeurIPS2018ベストペーパーとして選ばれた論文に、ResNetの中間層を微分方程式として見るという興味深い研究がありました1">
+  <meta property="og:description" content="Neural Ordinary Differential Equations NeurIPS2018ベストペーパーとして選ばれた論文に、ResNetの中間層を微分方程式として見るという興味深い研究がありました1">
+  <meta name="twitter:description" content="Neural Ordinary Differential Equations NeurIPS2018ベストペーパーとして選ばれた論文に、ResNetの中間層を微分方程式として見るという興味深い研究がありました1">
+  <meta name="author" content=""/>
+  <meta property="og:site_name" content="mtkwT blog" />
+  <meta property="og:url" content="https://mtkwt.github.io/blog/post/ode/" />
+  <meta property="og:type" content="article" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="generator" content="Hugo 0.62.0" />
+
+  <link rel="stylesheet" href="/blog/css/style.css" media="all" />
+  <link rel="stylesheet" href="/blog/css/syntax.css" media="all" />
+  <link rel="stylesheet" href="/blog/css/custom.css" media="all" />
+
+  <script src="/blog/js/script.js"></script>
+  <script src="/blog/js/custom.js"></script>
+  <script defer src="/blog/js/fontawesome.js"></script>
+</head>
+
+<body>
+
+<header class="site-header">
+  <nav class="site-navi">
+    <h1 class="site-title"><a href="/blog/">mtkwT blog</a></h1>
+    <ul class="site-navi-items">
+      <li class="site-navi-item-blog"><a href="/blog/post/" title="Blog">Blog</a></li>
+      <li class="site-navi-item-tags"><a href="/blog/tags/" title="Tags">Tags</a></li>
+      <li class="site-navi-item-about"><a href="/blog/about/me/" title="About">About</a></li>
+    </ul>
+  </nav>
+</header>
+<hr class="site-header-bottom">
+
+  <div class="main" role="main">
+    <article class="article">
+      
+      
+      <h1 class="article-title">Neural Ordinary Differential Equationsのための常微分方程式入門</h1>
+      
+      <hr class="article-title-bottom">
+      <ul class="article-meta">
+        
+        <li class="article-meta-date"><time>March 10, 2019</time></li>
+        
+        <li class="article-meta-tags">
+          <a href="/blog/tags/%E6%95%B0%E5%80%A4%E8%A8%88%E7%AE%97/">
+            <i class="fas fa-tag"></i>
+            数値計算
+          </a>&nbsp;
+        </li>
+        <li class="article-meta-tags">
+          <a href="/blog/tags/%E6%95%B0%E5%80%A4%E7%A9%8D%E5%88%86/">
+            <i class="fas fa-tag"></i>
+            数値積分
+          </a>&nbsp;
+        </li>
+      </ul>
+      
+<aside class="toc">
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#neural-ordinary-differential-equations">Neural Ordinary Differential Equations</a></li>
+    <li><a href="#1">1　常微分方程式</a>
+      <ul>
+        <li><a href="#11">常微分方程式（1.1）の解析的な解法</a></li>
+        <li><a href="#heading">常微分方程式（）の解の意味</a></li>
+        <li><a href="#11-1">常微分方程式（1.1）の解を一意に定める</a></li>
+      </ul>
+    </li>
+    <li><a href="#2">2　常微分方程式を数値計算で解く</a>
+      <ul>
+        <li><a href="#heading-1">差分方程式</a></li>
+        <li><a href="#heading-2">格子点</a></li>
+        <li><a href="#heading-3">微分解と差分解の関係</a></li>
+      </ul>
+    </li>
+    <li><a href="#3">3　代表的な差分法のアルゴリズム</a>
+      <ul>
+        <li><a href="#heading-4">オイラー法</a></li>
+        <li><a href="#heading-5">ホイン法</a></li>
+        <li><a href="#heading-6">ルンゲクッタ法</a></li>
+        <li><a href="#python">Pythonによる実装</a></li>
+        <li><a href="#heading-7">結果</a></li>
+      </ul>
+    </li>
+    <li><a href="#heading-8">終わりに</a></li>
+    <li><a href="#heading-9">参考</a></li>
+  </ul>
+</nav>
+</aside>
+      <h2 id="neural-ordinary-differential-equations">Neural Ordinary Differential Equations</h2>
+<p>NeurIPS2018ベストペーパーとして選ばれた論文に、ResNetの中間層を微分方程式として見るという興味深い研究がありました<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>。<br>
+この研究を理解する上で常微分方程式の数値計算手法を理解する必要があり勉強したので、自分なりにまとめてみたいと思います。</p>
+<!-- NeurIPS論文は以下にリンクを貼っておきます。   -->
+<h2 id="1">1　常微分方程式</h2>
+<p>簡単な常微分方程式を解いていくことでイメージを掴んでいきたいと思います。<br>
+ここでは以下のような常微分方程式を考えます。
+$$
+y'=(1-t)y\ \ \ \ \ (1.1)
+$$
+従属変数$y$の導関数$y'$を含む方程式を「微分方程式」と呼びます。また、(1.1)のように独立変数が1つ（$t$のみ）の微分方程式を「常微分方程式」と呼びます。</p>
+<h3 id="11">常微分方程式（1.1）の解析的な解法</h3>
+<p>まず式（1.1）の両辺を$y$で割ります。
+$$
+\frac{y&rsquo;}{y}=1-t
+$$
+次に両辺を$t$で積分します。
+$$
+\log{|y|}=-\frac{1}{2}(1-t)^{2}+C
+$$
+よって解は、
+$$
+y=A\exp{(-\frac{1}{2} (1-t)^{2})}\ \ \ \ \（1.2）
+$$
+となります。</p>
+<h3 id="heading">常微分方程式（）の解の意味</h3>
+<p><figure class="center">
+    <img src="/image/ode2.png" width="550" height="300"/> 
+</figure>
+
+$y(0)$（初期値）で解$y(t)$が一意に定まります。</p>
+<h3 id="11-1">常微分方程式（1.1）の解を一意に定める</h3>
+<p>まず$t=0$での$y$の値を決めます（初期条件）。
+$$
+y(0)=1
+$$
+すると、式（1.2）から$A$の値が定まります。
+$$
+A=\sqrt{e}
+$$
+よって、以下のように解が一意に定まります。
+$$
+y=\exp{(t-\frac{t^2}{2})}
+$$</p>
+<h2 id="2">2　常微分方程式を数値計算で解く</h2>
+<h3 id="heading-1">差分方程式</h3>
+<p>常微分方程式が与えられた時、毎回解析的に解けるとは限りません。そこで数値計算によって近似解を求めるというモチベーションがあります。以下では常微分方程式の数値計算手法を紹介します。
+$$
+y&rsquo; = f(t, y)\ \ \ \ \ (2.1),\ \ \ \ y(0) = \alpha\ \ \ \ \ (2.2)
+$$
+1階常微分方程式（2.1）を初期条件（2.2）の下で解く初期値問題です。</p>
+<p>微分をコンピュータ上で扱うので、小さな差分で表すことにします。つまり式（2.1）の左辺を差分商で表します。微分の定義を思い出してもらって極限はごく小さな差分$\Delta{t}$を用いると、
+$$
+\frac{1}{\Delta{t}} (y(t + \Delta{t}) - y(t)) = f(t, y(t))
+$$
+と表せます。</p>
+<p>このようにして、近似的に表した微分方程式を「差分方程式」と呼びます。微分方程式と差分方程式を区別するために差分方程式では、$y(t)$でなく$Y(t)$と書きます。
+$$
+\frac{1}{\Delta{t}} (Y(t + \Delta{t}) - Y(t)) = f(t, Y(t))\ \ \ \ \ (2.3)
+$$</p>
+<h3 id="heading-2">格子点</h3>
+<p>差分方程式（2.3）に初期条件を与えます。
+$$
+Y(0)=\alpha
+$$
+式（2.3）を変形すると、
+$$
+Y(t+\Delta{t})=Y(t)+\Delta{t} \cdot f(t, Y(t))\ \ \ \ \ (2.4)
+$$
+となります。<br>
+これに$t=0$を代入すると、
+$$
+Y(\Delta{t}) = Y(0) + \Delta{t} \cdot f(0, Y(0)) = \alpha + \Delta{t} \cdot f(0, \alpha)\ \ \ \ \ (2.5)
+$$
+より、$Y(0)$から直ちに$Y(\Delta{t})$が求まります。</p>
+<p>同様にして、式（2.4）を繰り返し用いると、
+$$
+Y(2\Delta{t}) = Y(\Delta{t}) + \Delta{t} \cdot f(\Delta{t}, Y(\Delta{t}))\\\<br>
+Y(3\Delta{t}) = Y(2\Delta{t}) + \Delta{t} \cdot f(\Delta{t}, Y(2\Delta{t}))\\\<br>
+Y(4\Delta{t}) = Y(3\Delta{t}) + \Delta{t} \cdot f(\Delta{t}, Y(3\Delta{t}))\\\<br>
+\cdots\\\<br>
+Y((j+1)\Delta{t}) = Y(j\Delta{t}) + \Delta{t} \cdot f(\Delta{t}, Y(j\Delta{t}))
+$$
+と飛び飛びの時刻でのY(t)の値が求まります（格子点）。</p>
+<p>この格子点を求める問題というのは、式（2.1）, (2.2)の微分方程式の問題を以下のように$Y_{j}$に関する漸化式の問題に置き換えられたものとして扱えます。
+$$
+\frac{1}{\Delta{t}} (Y_{j+1}-Y_{j}) = f(t_{j}, Y_{j})\ \ \ \ \ (2.6)\\\<br>
+Y_{0} = \alpha
+$$</p>
+<h3 id="heading-3">微分解と差分解の関係</h3>
+<p>式（2.1）と（2.6）は別物ですが、$\Delta{t}$が小さければ$Y_{j}$が$y(t_{j})$と近い値になることが期待されます。
+そこで初期値問題（1.1）から差分方程式の初期値問題を導き、元の問題と比較してみましょう。<br>
+式（1.1）の初期値問題は、
+$$
+y'=(1-t)y\\\<br>
+y(0) = 1
+$$
+これに対応する差分方程式の初期値問題は、
+$$
+\frac{1}{\Delta{t}} (Y_{j+1}-Y_{j}) = (1-t)Y_{j}\\\<br>
+Y_{0}=1
+$$
+となります。</p>
+<p>この時、以下の図で微分解はオレンジ線、差分解は青線（$\Delta{t}=0.2$）となります。
+<figure class="center">
+    <img src="/image/ode3.png" width="500" height="300"/> 
+</figure>
+
+$\Delta{t}$をどんどん小さくすれば、青線がどんどんオレンジ線に近づいていきます。その分計算時間はかかりますが。</p>
+<p>このように微分を差分の問題に置き換え、格子点上の値を数値計算によって求め、得られた差分解から微分解を推定する手法を「差分法」と呼びます。</p>
+<h2 id="3">3　代表的な差分法のアルゴリズム</h2>
+<h3 id="heading-4">オイラー法</h3>
+<p>件のNeurIPS論文でも用いらている常微分方程式の数値計算手法は、オイラー法と呼ばれるもっとも基本的な差分法アルゴリズムです。これは愚直に式（2.6）の漸化式を解くだけです。
+$$
+\frac{1}{\Delta{t}} (Y_{j+1}-Y_{j}) = f(t_{j},\ Y_{j})\ \ \ \ \ (3.1)\\\<br>
+$$</p>
+<h3 id="heading-5">ホイン法</h3>
+<p>オイラー法よりも少し複雑に右辺の値を求めています。
+$$
+k_{1} = f(t_{j}, Y_{j})\\\<br>
+k_{2} = f(t_{j} + \Delta{t},\ Y_{j} + \Delta{t} \cdot k_{1})\\\<br>
+\frac{1}{\Delta{t}} (Y_{j+1}-Y_{j}) = \frac{1}{2} (k_{1} + k_{2})\ \ \ \ \ (3.2)
+$$</p>
+<h3 id="heading-6">ルンゲクッタ法</h3>
+<p>さらに複雑な形で右辺を求めています。
+$$
+k_{1} = f(t_{j},\ Y_{j})\\\<br>
+k_{2} = f(t_{j} + \frac{\Delta{t}}{2},\ Y_{j} + \frac{\Delta{t}}{2} \cdot k_{1})\\\<br>
+k_{3} = f(t_{j} + \frac{\Delta{t}}{2},\ Y_{j} + \frac{\Delta{t}}{2} \cdot k_{2})\\\<br>
+k_{4} = f(t_{j} + \Delta{t},\ Y_{j} + \Delta{t} \cdot k_{3})\\\<br>
+\frac{1}{\Delta{t}} (Y_{j+1}-Y_{j}) = \frac{1}{6} (k_{1} + k_{2} + k_{3} + k_{4})\ \ \ \ \ (3.3)
+$$</p>
+<p>ホイン法もルンゲクッタ法も複雑に見えますが、計算としては$Y_{j+1}$の値を求めるのに$Y_{j}$の値しか使っていません。このような方法を1段階法と呼び、$Y_{j+1}$の値を求めるのに$Y_{j},\ Y_{j-1}$のように複数前の値まで使う方法を多段階法と呼びます。本記事では1段階法しか扱いません。</p>
+<h3 id="python">Pythonによる実装</h3>
+<p>以下のような常微分方程式を考えます。
+$$
+y&rsquo; = 2 t y - 2\\\<br>
+y(0) = 2
+$$
+これを上で紹介した3つの差分法アルゴリズムによって計算し、比較するプログラムです。<br>
+$\Delta{t}$を0.2と0.02の場合とで分けています。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="sa"></span><span class="s2">&#34;&#34;&#34;</span><span class="s2">
+</span><span class="s2"></span><span class="s2">変数係数常微分方程式</span><span class="s2">
+</span><span class="s2"></span><span class="s2">y</span><span class="s2">&#39;</span><span class="s2"> = 2*t*y - 2</span><span class="s2">
+</span><span class="s2"></span><span class="s2">y(0) = 2</span><span class="s2">
+</span><span class="s2"></span><span class="s2">&#34;&#34;&#34;</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="sa"></span><span class="s2">&#34;</span><span class="s2">オイラー法、dt=0.2の場合</span><span class="s2">&#34;</span><span class="p">)</span>
+    <span class="n">euler</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Y</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mi">2</span><span class="o">/</span><span class="mi">10</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="p">)</span>
+    
+    <span class="k">print</span><span class="p">(</span><span class="sa"></span><span class="s2">&#34;</span><span class="s2">オイラー法、dt=0.02の場合</span><span class="s2">&#34;</span><span class="p">)</span>
+    <span class="n">euler</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Y</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mi">2</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="p">)</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="sa"></span><span class="s2">&#34;</span><span class="s2">ホイン法、dt=0.2の場合</span><span class="s2">&#34;</span><span class="p">)</span>
+    <span class="n">haun</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Y</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mi">2</span><span class="o">/</span><span class="mi">10</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="p">)</span>
+    
+    <span class="k">print</span><span class="p">(</span><span class="sa"></span><span class="s2">&#34;</span><span class="s2">ホイン法、dt=0.02の場合</span><span class="s2">&#34;</span><span class="p">)</span>
+    <span class="n">haun</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Y</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mi">2</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="p">)</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="sa"></span><span class="s2">&#34;</span><span class="s2">ルンゲクッタ法、dt=0.2の場合</span><span class="s2">&#34;</span><span class="p">)</span>
+    <span class="n">runge_kutta</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Y</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mi">2</span><span class="o">/</span><span class="mi">10</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="p">)</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="sa"></span><span class="s2">&#34;</span><span class="s2">ルンゲクッタ法、dt=0.02の場合</span><span class="s2">&#34;</span><span class="p">)</span>
+    <span class="n">runge_kutta</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Y</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mi">2</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="p">)</span>
+
+<span class="c1"># 入力関数</span>
+<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span><span class="p">:</span>
+    <span class="k">return</span> <span class="mi">2</span><span class="o">*</span><span class="n">t</span><span class="o">*</span><span class="n">y</span> <span class="o">-</span> <span class="mi">2</span>
+
+<span class="c1"># 入力：y&#39; = f(y, t), y(0) = a, T=2, N：分割数, dt:T/N</span>
+<span class="c1"># オイラー法</span>
+<span class="k">def</span> <span class="nf">euler</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span><span class="p">:</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">j</span> <span class="o">*</span> <span class="n">dt</span>
+        <span class="n">Y</span> <span class="o">=</span> <span class="n">Y</span> <span class="o">+</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">round</span><span class="p">(</span><span class="mi">10</span><span class="o">*</span><span class="p">(</span><span class="n">t</span><span class="o">+</span><span class="n">dt</span><span class="p">)</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="sa"></span><span class="s2">&#34;</span><span class="s2">f(</span><span class="si">%.02f</span><span class="s2">) = </span><span class="si">%f</span><span class="s2">&#34;</span> <span class="o">%</span> <span class="p">(</span><span class="n">t</span><span class="o">+</span><span class="n">dt</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span><span class="p">)</span>
+
+<span class="c1"># ホイン法</span>
+<span class="k">def</span> <span class="nf">haun</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span><span class="p">:</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">j</span> <span class="o">*</span> <span class="n">dt</span>
+        
+        <span class="n">k1</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+        <span class="n">k2</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span> <span class="o">+</span> <span class="n">dt</span><span class="p">,</span> <span class="n">Y</span> <span class="o">+</span> <span class="p">(</span><span class="n">dt</span> <span class="o">*</span> <span class="n">k1</span><span class="p">)</span><span class="p">)</span>
+        
+        <span class="n">Y</span> <span class="o">=</span> <span class="n">Y</span> <span class="o">+</span> <span class="p">(</span><span class="n">k1</span> <span class="o">+</span> <span class="n">k2</span><span class="p">)</span> <span class="o">*</span> <span class="n">dt</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="nb">round</span><span class="p">(</span><span class="mi">10</span><span class="o">*</span><span class="p">(</span><span class="n">t</span><span class="o">+</span><span class="n">dt</span><span class="p">)</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="sa"></span><span class="s2">&#34;</span><span class="s2">f(</span><span class="si">%.02f</span><span class="s2">) = </span><span class="si">%f</span><span class="s2">&#34;</span> <span class="o">%</span> <span class="p">(</span><span class="n">t</span><span class="o">+</span><span class="n">dt</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span><span class="p">)</span>
+
+<span class="c1"># ルンゲクッタ法</span>
+<span class="k">def</span> <span class="nf">runge_kutta</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span><span class="p">:</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">j</span> <span class="o">*</span> <span class="n">dt</span>
+
+        <span class="n">k1</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+        <span class="n">k2</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span> <span class="o">+</span> <span class="n">dt</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Y</span> <span class="o">+</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">k1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">k3</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span> <span class="o">+</span> <span class="n">dt</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Y</span> <span class="o">+</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">k2</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">k4</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span> <span class="o">+</span> <span class="n">dt</span><span class="p">,</span> <span class="n">Y</span> <span class="o">+</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">k3</span><span class="p">)</span>
+
+        <span class="n">Y</span> <span class="o">=</span> <span class="n">Y</span> <span class="o">+</span> <span class="p">(</span><span class="n">k1</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">k2</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">k3</span> <span class="o">+</span> <span class="n">k4</span><span class="p">)</span> <span class="o">*</span> <span class="n">dt</span> <span class="o">/</span> <span class="mi">6</span>
+        
+        <span class="k">if</span> <span class="nb">round</span><span class="p">(</span><span class="mi">10</span><span class="o">*</span><span class="p">(</span><span class="n">t</span><span class="o">+</span><span class="n">dt</span><span class="p">)</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="sa"></span><span class="s2">&#34;</span><span class="s2">f(</span><span class="si">%.02f</span><span class="s2">) = </span><span class="si">%f</span><span class="s2">&#34;</span> <span class="o">%</span> <span class="p">(</span><span class="n">t</span><span class="o">+</span><span class="n">dt</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="sa"></span><span class="s2">&#34;</span><span class="s2">__main__</span><span class="s2">&#34;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">(</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="heading-7">結果</h3>
+<p>実験の結果は以下のようになります。</p>
+<pre><code>オイラー法、dt=0.2の場合
+f(0.20) = 1.600000
+f(0.40) = 1.328000
+f(0.60) = 1.140480
+f(0.80) = 1.014195
+f(1.00) = 0.938738
+f(1.20) = 0.914233
+f(1.40) = 0.953064
+f(1.60) = 1.086781
+f(1.80) = 1.382320
+f(2.00) = 1.977591
+
+オイラー法、dt=0.02の場合
+f(0.20) = 1.663896
+f(0.40) = 1.442943
+f(0.60) = 1.311958
+f(0.80) = 1.265990
+f(1.00) = 1.322528
+f(1.20) = 1.534956
+f(1.40) = 2.028438
+f(1.60) = 3.089250
+f(1.80) = 5.392041
+f(2.00) = 10.604015
+
+ホイン法、dt=0.2の場合
+f(0.20) = 1.664000
+f(0.40) = 1.442330
+f(0.60) = 1.310488
+f(0.80) = 1.263748
+f(1.00) = 1.319577
+f(1.20) = 1.530870
+f(1.40) = 2.020671
+f(1.60) = 3.067178
+f(1.80) = 5.315537
+f(2.00) = 10.326220
+
+ホイン法、dt=0.02の場合
+f(0.20) = 1.670727
+f(0.40) = 1.455854
+f(0.60) = 1.332365
+f(0.80) = 1.298135
+f(1.00) = 1.375878
+f(1.20) = 1.630357
+f(1.40) = 2.213779
+f(1.60) = 3.480998
+f(1.80) = 6.291466
+f(2.00) = 12.841209
+
+ルンゲクッタ法、dt=0.2の場合
+f(0.20) = 1.670793
+f(0.40) = 1.455986
+f(0.60) = 1.332578
+f(0.80) = 1.298462
+f(1.00) = 1.376392
+f(1.20) = 1.631203
+f(1.40) = 2.215223
+f(1.60) = 3.483448
+f(1.80) = 6.295094
+f(2.00) = 12.843333
+
+ルンゲクッタ法、dt=0.02の場合
+f(0.20) = 1.670782
+f(0.40) = 1.455968
+f(0.60) = 1.332556
+f(0.80) = 1.298445
+f(1.00) = 1.376407
+f(1.20) = 1.631343
+f(1.40) = 2.215832
+f(1.60) = 3.485783
+f(1.80) = 6.303834
+f(2.00) = 12.876270
+</code></pre><p>WolframAlphaでこの計算を解くと12.8763…となるので、ルンゲクッタ法（$\Delta{t}=0.02$）の場合がもっとも良く近似できていそうだと分かります。</p>
+<h2 id="heading-8">終わりに</h2>
+<p>今回は常微分方程式の数値計算手法をざっと眺めてみました。NeurIPS論文の方も噛み砕き次第、まとめてみたいと思います。<br>
+実はこちらのスライド<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>が非常によくまとまっているのでこれを読めば良いという話もあります。</p>
+<h2 id="heading-9">参考</h2>
+<p>本文の説明やコードを書く際の擬似コードは以下の書籍を参考にさせて頂きました。</p>
+<ul>
+<li>数値計算｜高橋大輔｜岩波書店｜1996</li>
+</ul>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://arxiv.org/abs/1806.07366">https://arxiv.org/abs/1806.07366</a> <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://www.slideshare.net/DeepLearningJP2016/dlneural-ordinary-differential-equations">https://www.slideshare.net/DeepLearningJP2016/dlneural-ordinary-differential-equations</a> <a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+
+    </article>
+
+    
+
+
+    <ul class="pager article-pager">
+      <li class="pager-newer">
+          <a href="/blog/post/vae/" data-toggle="tooltip" data-placement="top" title="VAEの理論とTensorflowによる実装~~Fashion-MNISTの生成~~">&lt; Newer</a>
+      </li>
+      <li class="pager-older">
+        <a href="/blog/post/levenshtein/" data-toggle="tooltip" data-placement="top" title="編集距離（Levenshtein Distance）の正規化手法">Older &gt;</a>
+      </li>
+    </ul>
+  </div>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+    });
+</script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+</body>
+</html>

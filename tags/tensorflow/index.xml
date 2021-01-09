@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>tensorflow on mtkwT blog</title>
+    <link>https://mtkwt.github.io/blog/tags/tensorflow/</link>
+    <description>Recent content in tensorflow on mtkwT blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja</language>
+    <copyright>&amp;copy; Copyright mtkwT</copyright>
+    <lastBuildDate>Wed, 06 May 2020 20:00:38 +0900</lastBuildDate>
+    
+	<atom:link href="https://mtkwt.github.io/blog/tags/tensorflow/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>エラーメモ:tf2のSparseCategoricalCrossentropyではヘッセ行列を計算できない</title>
+      <link>https://mtkwt.github.io/blog/post/tf2_hessian_error/</link>
+      <pubDate>Wed, 06 May 2020 20:00:38 +0900</pubDate>
+      
+      <guid>https://mtkwt.github.io/blog/post/tf2_hessian_error/</guid>
+      <description>環境（Dockerhub） tensorflow/tensorflow:2.1.0-gpu-py3-jupyter エラーログ LookupError: Gradient explicitly disabled. Reason: b&amp;quot;Currently there is no way to take the second derivative of sparse_softmax_cross_entropy_with_logits due to the fused implementation&#39;s interaction with tf.gradients()&amp;quot; 原因 ヘッセ行列を計算するloss関数にtf.kera</description>
+    </item>
+    
+  </channel>
+</rss>

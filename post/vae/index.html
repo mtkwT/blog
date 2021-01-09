@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <title>VAEの理論とTensorflowによる実装~~Fashion-MNISTの生成~~ - mtkwT blog</title>
+  <meta property="og:title" content="VAEの理論とTensorflowによる実装~~Fashion-MNISTの生成~~ - mtkwT blog" />
+  <meta name="twitter:title" content="VAEの理論とTensorflowによる実装~~Fashion-MNISTの生成~~ - mtkwT blog" />
+  <meta name="description" content="VAEとは VAE（Variable Auto Encoder） は深層生成モデルの一種です。深層生成モデルの神童、GANが設定する確率分布は暗黙的ですが">
+  <meta property="og:description" content="VAEとは VAE（Variable Auto Encoder） は深層生成モデルの一種です。深層生成モデルの神童、GANが設定する確率分布は暗黙的ですが">
+  <meta name="twitter:description" content="VAEとは VAE（Variable Auto Encoder） は深層生成モデルの一種です。深層生成モデルの神童、GANが設定する確率分布は暗黙的ですが">
+  <meta name="author" content=""/>
+  <meta property="og:site_name" content="mtkwT blog" />
+  <meta property="og:url" content="https://mtkwt.github.io/blog/post/vae/" />
+  <meta property="og:type" content="article" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="generator" content="Hugo 0.62.0" />
+
+  <link rel="stylesheet" href="/blog/css/style.css" media="all" />
+  <link rel="stylesheet" href="/blog/css/syntax.css" media="all" />
+  <link rel="stylesheet" href="/blog/css/custom.css" media="all" />
+
+  <script src="/blog/js/script.js"></script>
+  <script src="/blog/js/custom.js"></script>
+  <script defer src="/blog/js/fontawesome.js"></script>
+</head>
+
+<body>
+
+<header class="site-header">
+  <nav class="site-navi">
+    <h1 class="site-title"><a href="/blog/">mtkwT blog</a></h1>
+    <ul class="site-navi-items">
+      <li class="site-navi-item-blog"><a href="/blog/post/" title="Blog">Blog</a></li>
+      <li class="site-navi-item-tags"><a href="/blog/tags/" title="Tags">Tags</a></li>
+      <li class="site-navi-item-about"><a href="/blog/about/me/" title="About">About</a></li>
+    </ul>
+  </nav>
+</header>
+<hr class="site-header-bottom">
+
+  <div class="main" role="main">
+    <article class="article">
+      
+      
+      <h1 class="article-title">VAEの理論とTensorflowによる実装~~Fashion-MNISTの生成~~</h1>
+      
+      <hr class="article-title-bottom">
+      <ul class="article-meta">
+        
+        <li class="article-meta-date"><time>June 21, 2019</time></li>
+        
+        <li class="article-meta-tags">
+          <a href="/blog/tags/%E6%B7%B1%E5%B1%A4%E5%AD%A6%E7%BF%92/">
+            <i class="fas fa-tag"></i>
+            深層学習
+          </a>&nbsp;
+        </li>
+        <li class="article-meta-tags">
+          <a href="/blog/tags/%E7%94%9F%E6%88%90%E3%83%A2%E3%83%87%E3%83%AB/">
+            <i class="fas fa-tag"></i>
+            生成モデル
+          </a>&nbsp;
+        </li>
+      </ul>
+      
+<aside class="toc">
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#vae">VAEとは</a></li>
+    <li><a href="#vae-1">VAEの理論概説</a></li>
+    <li><a href="#tensorflowvae">TensorflowによるVAEの実装</a></li>
+    <li><a href="#vae-2">VAEの欠点</a></li>
+  </ul>
+</nav>
+</aside>
+      <h2 id="vae">VAEとは</h2>
+<p>VAE（Variable Auto Encoder）
+は深層生成モデルの一種です。深層生成モデルの神童、GANが設定する確率分布は暗黙的ですが、こちらのVAEは明示的に確率分布を設定します。VAEはAdamを開発したことで有名なDiederik P. Kingma大先生が考案したモデルです。今日はKingma先生の作ったVAEを同じくKingma先生が作ったAdamで学習させましょう。</p>
+<h2 id="vae-1">VAEの理論概説</h2>
+<p>ここでは軽くVAEの理論的なお話をします。</p>
+<p>VAEでは通常の生成モデル$p(x|\theta)$に潜在変数を加えます。
+つまり、$p(x,z|\theta)$を考えます。</p>
+<p>ただし、潜在変数$z$は訓練データ中には存在しないので確率の乗法定理と周辺化によって以下のように対数尤度$\log{p(x|\theta)}$を変形します。
+$$
+\log{p(x|\theta)} =
+\log{\int{p(x,z|\theta)dz}} =
+\log{\int{p(x|z,\theta)p(z)dz}}
+$$</p>
+<p>これでもまだ計算が困難なのでEMアルゴリズムにおける変分下界を考えます。変分下界は以下のように表せます。
+$$
+\log{p(x|\theta)} =
+\log{\int{p(z|x,\hat{\theta}) \frac{p(x,z|\theta)}{p(z|x,\hat{\theta})} dz}} +
+D[p(z|x,\hat{\theta})|p(z|x,\theta)]
+\equiv
+L(x;\hat{\theta},\theta) +
+D[p(z|x,\hat{\theta})|p(z|x,\theta)]
+$$</p>
+<p>上式における最右辺の第1項$L(x;\hat{\theta},\theta)$が変分下界で、第2項$D[p(z|x,\hat{\theta})|p(z|x,\theta)]$はKL-Divergenceです。
+KL-Divergenceは非負なので、変分下界を最大化することが対数尤度を最大化することになるというのがEMアルゴリズムの根拠です。</p>
+<p>VAEではこの$p(z|x,\hat{\theta})$に任意の分布$q(z|x,\phi)$を用いても良いという一般化を施します。
+すると、VAEにおける変分下界は分布$q(z|x,\phi)$の期待値として以下のように展開されます。</p>
+<p>\(
+L(x;\phi,\theta) =
+E[ \log{\frac{p(x,z|\theta)}{q(z|x,\phi)}} ]\\\<br>
+= E[ \log{\frac{p(x,z|\theta)}{q(z|x,\phi)}} ]\\\<br>
+= E[ \log{p(x,z|\theta)} - \log{q(z|x,\phi)} ]\\\<br>
+= E[ \log{p(x|z,\theta)} + \log{p(z|\theta)} - \log{q(z|x,\phi)}]\\\<br>
+= E[ \log{p(x|z,\theta)} ] - E[ \log{q(z|x,\phi)} - \log{p(z|\theta)} ]\\\<br>
+= E[ \log{p(x|z,\theta)} ] - D[ q(z|x,\phi)|p(z|\theta) ]
+\)</p>
+<p>さて、これで目的関数を設定することができたので、この変分下界を最大化するようにDNNのパラメータを勾配を用いて更新すれば良いということになります。</p>
+<p>しかし、まだ問題点があります。上式における変分下界の第1項
+$E[ \log{p(x|z,\theta)} ]$
+では推論モデルについての期待値になっています。
+$z$をサンプリングするという行為は確率的な操作なので、そこに微分は定義されません。つまりニューラルネットワークでモデル化する場合、誤差逆伝播の際に勾配が期待値の中に入らないということになります。
+そこで、VAEでは以下のようなリパラメトリゼーショントリックというテクニックを用いて勾配を期待値の中に押し込みます。推論モデルにはガウス分布を仮定します。
+$$
+z = \mu + \sigma * epsilon
+$$</p>
+<h2 id="tensorflowvae">TensorflowによるVAEの実装</h2>
+<p>以下のjupyter notebook上で結果も確認できます。</p>
+<p><a href="https://gist.github.com/mtkwT/c6991b38ce4584ba222fd74bd9f4ab82">Implementation of VAE by tensorflow</a></p>
+<p>潜在変数の次元や、ネットワーク構造を変えてみると結果も変わるので色々と試してみると興味深いと思います。</p>
+<h2 id="vae-2">VAEの欠点</h2>
+<p>上のnotebookの結果を見るとわかるように、ぼやけてしまって細かな部分を再現できていない画像もあります。
+これは、VAEが確率分布を明示的にモデル化して最尤推定していることに原因があります。つまり生成分布をガウス分布としてモデル化するので、再構成誤差が二乗誤差になっています。すると、画素をはっきりとさせるよりもピクセル全体での誤差が小さくなるように学習が進みます。</p>
+
+    </article>
+
+    
+
+
+    <ul class="pager article-pager">
+      <li class="pager-newer">
+          <a href="/blog/post/mosh/" data-toggle="tooltip" data-placement="top" title="CentOS7にMoshをインストールして快適なリモート接続ライフを送る">&lt; Newer</a>
+      </li>
+      <li class="pager-older">
+        <a href="/blog/post/ode/" data-toggle="tooltip" data-placement="top" title="Neural Ordinary Differential Equationsのための常微分方程式入門">Older &gt;</a>
+      </li>
+    </ul>
+  </div>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+    });
+</script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+</body>
+</html>

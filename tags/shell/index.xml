@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>shell on mtkwT blog</title>
+    <link>https://mtkwt.github.io/blog/tags/shell/</link>
+    <description>Recent content in shell on mtkwT blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja</language>
+    <copyright>&amp;copy; Copyright mtkwT</copyright>
+    <lastBuildDate>Sun, 12 Apr 2020 00:40:58 +0900</lastBuildDate>
+    
+	<atom:link href="https://mtkwt.github.io/blog/tags/shell/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>CentOS7にMoshをインストールして快適なリモート接続ライフを送る</title>
+      <link>https://mtkwt.github.io/blog/post/mosh/</link>
+      <pubDate>Sun, 12 Apr 2020 00:40:58 +0900</pubDate>
+      
+      <guid>https://mtkwt.github.io/blog/post/mosh/</guid>
+      <description>Mosh（Mobile shell）とは Moshは不安定な回線環境でも堅牢なリモート接続を行ってくれるリモートターミナルアプリケーションです。</description>
+    </item>
+    
+  </channel>
+</rss>

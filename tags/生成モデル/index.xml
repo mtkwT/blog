@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>生成モデル on mtkwT blog</title>
+    <link>https://mtkwt.github.io/blog/tags/%E7%94%9F%E6%88%90%E3%83%A2%E3%83%87%E3%83%AB/</link>
+    <description>Recent content in 生成モデル on mtkwT blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja</language>
+    <copyright>&amp;copy; Copyright mtkwT</copyright>
+    <lastBuildDate>Fri, 21 Jun 2019 23:12:26 +0900</lastBuildDate>
+    
+	<atom:link href="https://mtkwt.github.io/blog/tags/%E7%94%9F%E6%88%90%E3%83%A2%E3%83%87%E3%83%AB/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>VAEの理論とTensorflowによる実装~~Fashion-MNISTの生成~~</title>
+      <link>https://mtkwt.github.io/blog/post/vae/</link>
+      <pubDate>Fri, 21 Jun 2019 23:12:26 +0900</pubDate>
+      
+      <guid>https://mtkwt.github.io/blog/post/vae/</guid>
+      <description>VAEとは VAE（Variable Auto Encoder） は深層生成モデルの一種です。深層生成モデルの神童、GANが設定する確率分布は暗黙的ですが</description>
+    </item>
+    
+  </channel>
+</rss>
