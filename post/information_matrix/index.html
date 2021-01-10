@@ -112,7 +112,7 @@ TIC自体は1976年に考案された情報量基準ですが、ニューラル�
 <p>論文中でInformation Matrixとして登場する3つの行列の定義が以下になります。
 $H(\theta)$がヘッセ行列、$C(\theta)$は勾配共分散行列、$F(\theta)$がフィッシャー情報行列です。</p>
 <figure class="center">
-    <img src="/image/Infomation_Matrix/info_mat.png" width="480" height="240"/> 
+    <img src="../../image/Infomation_Matrix/info_mat.png" width="480" height="240"/> 
 </figure>
 
 <p>$p$がデータ分布、$q_{\theta}$はモデル分布で、それぞれ$X \times Y \rightarrow R$を表しています。
@@ -124,7 +124,7 @@ HとFは曲率行列であり、現在の点の周りの空間の形状を表し
 <h4 id="information-matrix-1">Information Matrix同士の距離評価</h4>
 <p>Information Matrix同士で以下のような不等式が成り立ちます。</p>
 <figure class="center">
-    <img src="/image/Infomation_Matrix/info_mat_bound.png" width="480" height="240"/> 
+    <img src="../../image/Infomation_Matrix/info_mat_bound.png" width="480" height="240"/> 
 </figure>
 
 <p>ここで$D_{X^2}(p||q_{\theta})$は$X^2$ダイバージェンスという確率分布間の距離を表す関数で以下のように定義されます。
@@ -167,14 +167,14 @@ $$
 </ul>
 <p>モデルのアーキテクチャとして、より詳しくは以下の通りです。
 <figure class="center">
-    <img src="/image/Infomation_Matrix/model_arch.png" width="800" height="200"/> 
+    <img src="../../image/Infomation_Matrix/model_arch.png" width="800" height="200"/> 
 </figure>
 </p>
 <p>データの次元が大きすぎるとInformation Matrixの計算が困難になるため、すべての画像をグレースケール化・$7 \times 7$ピクセルにリサイズしています。</p>
 <h4 id="heading-6">実験結果</h4>
 <p>以下の図1はさまざまなモデルアーキテクチャ・データセットについて、学習中の勾配共分散行列$C$とフィッシャー情報行列$F$間距離の変化を表しています。
 <figure class="center">
-    <img src="/image/Infomation_Matrix/C-F.png" width="480" height="380"/> 
+    <img src="../../image/Infomation_Matrix/C-F.png" width="480" height="380"/> 
 </figure>
 </p>
 <p>一部のモデル・データセットでは、最終的に2つの行列が訓練データにおいて一致しています。
@@ -185,7 +185,7 @@ $$
 さらに右図における$s(A,B)$は2つの行列AとB間のcosine similarity、つまり$\frac{A \cdot B}{||A|| \cdot ||B|||}$を表しています。
 ここで、$r(A,B)=1$かつ$s(A,B)=1$のとき、$A=B$となります。
 <figure class="center">
-    <img src="/image/Infomation_Matrix/info_mat_sim.png" width="480" height="250"/> 
+    <img src="../../image/Infomation_Matrix/info_mat_sim.png" width="480" height="250"/> 
 </figure>
 </p>
 <p>学習の初期段階ではHがFやCとのcosine similarityにおいて異なる行列となっていますが、100step目付近からこれらの行列はすべて高い類似度を取るようになります。
@@ -194,7 +194,7 @@ $$
 <p>以下の図3は、汎化ギャップとTIC・Sensitivity・AICという推定量の当てはまり度を表しています。
 ここで、汎化ギャップとは訓練損失とテスト損失の差です。
 <figure class="center">
-    <img src="/image/Infomation_Matrix/compare_TIC.png" width="600" height="450"/> 
+    <img src="../../image/Infomation_Matrix/compare_TIC.png" width="600" height="450"/> 
 </figure>
 </p>
 <p>SVHNデータセットの2000サンプルのサブセット上で3層ニューラルネットワークを学習してそれぞれの指標を計算します。
@@ -203,13 +203,13 @@ $$
 <p>図3(a),(b)のどちらでもTICがもっとも汎化ギャップに当てはまっていることが分かります。</p>
 <p>図4では汎化ギャップとTIC・flatnessとの相関を比較しています。
 <figure class="center">
-    <img src="/image/Infomation_Matrix/TIC_flatness.png" width="600" height="450"/> 
+    <img src="../../image/Infomation_Matrix/TIC_flatness.png" width="600" height="450"/> 
 </figure>
 </p>
 <p>図4(a),(b)を比較すると、明らかにTICの方がヘッセ行列のトレース（flatness）に比べて汎化ギャップとの相関がある、ということがわかります。</p>
 <p>最後に図5ではTICの近似値を用いて汎化ギャップとの相関を見ています。
 <figure class="center">
-    <img src="/image/Infomation_Matrix/tic_approximation.png" width="600" height="450"/> 
+    <img src="../../image/Infomation_Matrix/tic_approximation.png" width="600" height="450"/> 
 </figure>
 </p>
 <p>どちらの図もヘッセ行列の代わりにフィッシャー情報行列を用いており、右図は逆行列を計算する代わりにそれぞれのトレースの比を用いています。トレースの比を用いる場合、汎化ギャップが大きいときに高い相関を示すが、小さいときには過大評価する傾向があります。</p>
